@@ -11,26 +11,42 @@ import { TRANSPORT_INFO } from './entities/transport_info.entity';
 import { PAYMENT_INFO } from './entities/payment_info.entity';
 import { DESTINATION_INFO } from './entities/destination_info.entity';
 import { REVIEW_INFO } from './entities/review_info.entity';
+import { MESSAGE } from './entities/message.entity';//// DB required for the Tour Guide Admin dashboard
+import { NOTIFICATION } from './entities/notification.entity';
+import { TOUR_POST } from './entities/tour_post.entity';
+import { TRANSACTION } from './entities/income.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LOGIN_INFO, USER_INFO, AGENCY_INFO, BOOKING_INFO, PACKAGE_INFO, TRANSPORT_INFO, DESTINATION_INFO, REVIEW_INFO, PAYMENT_INFO]), //npm add @nestjs/typeorm typeorm pg
-     TypeOrmModule.forRoot(  // Connecting POSTGRE SQL to NESTJS
-     {
-         type: 'postgres',
-         host: 'localhost',
-         port: 5432,
-         username: 'postgres',
-         password: 'root',
-         database: 'TOURISM_DATABASE',
-         entities: [
-             __dirname + '/../**/*.entity{.ts,.js}',
-         ],
-         synchronize: true,
-       }
-   ),
-   
- ],
+    TypeOrmModule.forFeature([
+      LOGIN_INFO,
+      AGENCY_INFO,
+      BOOKING_INFO,
+      PACKAGE_INFO,
+      TRANSPORT_INFO,
+      DESTINATION_INFO,
+      USER_INFO, // DB required for the Tour Guide Admin dashboard
+      REVIEW_INFO,
+      PAYMENT_INFO,
+      MESSAGE,
+      NOTIFICATION,
+      TOUR_POST,
+      TRANSACTION
+    ]), //npm add @nestjs/typeorm typeorm pg
+    TypeOrmModule.forRoot(
+      // Connecting POSTGRE SQL to NESTJS
+      {
+        type: 'postgres',
+        host: 'localhost',
+        port: 5432,
+        username: 'postgres',
+        password: 'root',
+        database: 'TOURISM_DATABASE',
+        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+        synchronize: true,
+      },
+    ),
+  ],
   controllers: [],
   providers: [],
 })
