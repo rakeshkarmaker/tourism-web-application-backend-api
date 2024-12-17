@@ -42,7 +42,8 @@ import { TRANSACTION } from './entities/income.entity';
         username: 'postgres',
         password: 'root',
         database: 'TOURISM_DATABASE',
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+        entities: [__dirname + '/../database/entities/*.entity.{js,ts}'],
+        autoLoadEntities: true, // Enable automatic entity loading
         synchronize: true,
       },
     ),
