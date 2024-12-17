@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LOGIN_INFO } from '../database/entities/login_info.entity';
 import { USER_INFO } from '../database/entities/user_info.entity';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { USER_INFO } from '../database/entities/user_info.entity';
         synchronize: true,
       },
     ),
+    MailModule
   ],
   controllers: [AuthController],
   providers: [AuthService]

@@ -6,6 +6,8 @@ import { DatabaseModule } from './database/database.module'; //Connecting the Da
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth/constants';
+//v1.3.1- adding email
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { jwtConstants } from './auth/constants';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
     }),
+    MailModule
   ],
   controllers: [AppController],
   providers: [AppService],

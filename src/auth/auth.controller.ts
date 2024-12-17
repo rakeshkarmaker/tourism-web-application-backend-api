@@ -2,6 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dtos/signup.dto';
 import { LoginDto } from './dtos/login.dto';
+import { ForgotPassDto } from './dtos/forget_pass.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,5 +23,10 @@ export class AuthController {
 
   }
   //Post Refeash Token
+  //v1,3.1 - Req OTP
+  @Post('reqOtp')
+  async reqOtp(@Body() email:ForgotPassDto){
+    return this.AuthService.sendOtp(email);
+  }
 }
 

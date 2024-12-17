@@ -23,4 +23,12 @@ export class LOGIN_INFO{
 
   @Column({ nullable: true }) 
   refTokenExpDate: Date;
+
+  //v1.3.1- Forget Password entity update
+  @Column({ nullable: true })
+  resetToken: string;
+
+  @Column({ nullable: true }) 
+  resetTokenExpDate: Date;
+  
 }
