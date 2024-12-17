@@ -7,11 +7,11 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 // import { jwtConstants } from './auth/constants';
 //v1.3.1- adding email
-import { MailModule } from './mail/mail.module';
 //v.1.4.2- config adding.
 import config from './config/config';//npm i @nestjs/config
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TourProfileModule } from './tour-profile/tour-profile.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -31,7 +31,7 @@ import { TourProfileModule } from './tour-profile/tour-profile.module';
       global:true,
       inject:[ConfigService]
     }),
-    MailModule,
+    MailerModule,
     TourProfileModule,
     
   ],

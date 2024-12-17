@@ -15,9 +15,9 @@ import { JwtService } from '@nestjs/jwt'; // v1.4.2- needed already given
 import { ForgotPassDto } from './dtos/forget_pass.dto';
 
 
-
-// import { MailController } from './mail/mail.controller';
 import { MailService } from '../mail/mail.service';
+import { sendotpDto } from './dtos/sendotp.dto';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -138,7 +138,7 @@ export class AuthService {
   }
 
   //v1.3.1-OTP request for, Forget Password
-  async sendOtp(forgotPasswordDto: ForgotPassDto) {
+  async sendOtp(forgotPasswordDto: sendotpDto) {
     const { email } = forgotPasswordDto;
   
     // Check if the user exists in the database
@@ -183,6 +183,55 @@ export class AuthService {
     return this.saveRefreshToken(token);// If the user token is valid, generating a new token
     
   }
+
+  //v1.5.1- ForgetPassword
+  async generateAndHashPassword(length: number = 12): Promise<{ password: string; hash: string }> {
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+    
+    // Generate a secure random password
+    const passwordArray = Array.from(crypto.getRandomValues(new Uint8Array(length)));
+    const password = passwordArray.map((num) => charset[num % charset.length]).join('');
+  
+    // Hash the password using bcrypt
+    const hash = await bcrypt.hash(password, 11); // Cost factor for bcrypt =11 here 300ms+ time required
+  
+    return { password, hash };
+  }
+
+  async forgotPass(forgotPasswordDto: ForgotPassDto) {
+    const { email,otp } = forgotPasswordDto;
+  
+    // Check if the user exists in the database
+    const user = await this.loginRepo.findOne({ where: { email } });
+  
+    if (!user) {
+      throw new NotFoundException('User not found. Invalid Request.');
+    }
+
+    if(user.resetToken===otp &&new Date(user.resetTokenExpDate) >= new Date()){ // If reset token mactchs and reset time still valid then return true => send reset Pass
+
+      //Generating Password
+      const {password,hash} = await this.generateAndHashPassword();
+      user.password=hash; //Setting hashed new password in the DB
+
+      //Sending Email to the user
+      this.mailService.sendMail(email,
+        "Your Tourify Accoount Password has been reset!",
+        `'Your Password Has been reset and Recovery pass is: ${password}`);
+
+      //Return values
+      return {
+        message: 'Your Password Has been reset and Recovery pass send to email.',
+        New_Password: password,
+      };
+
+    }else{
+
+      throw new UnauthorizedException("Invalid OTP or Email.");
+    }
+
+  }
+
 
     
   
