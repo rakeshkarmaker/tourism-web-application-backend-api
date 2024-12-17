@@ -1,4 +1,8 @@
-import { BadGatewayException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadGatewayException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SignupDto } from './dtos/signup.dto';
 import { USER_INFO } from 'src/database/entities/user_info.entity';
 import { LOGIN_INFO } from 'src/database/entities/login_info.entity';
@@ -6,6 +10,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt'; // npm i @types/bcrypt
 import { LoginDto } from './dtos/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +20,22 @@ export class AuthService {
 
     @InjectRepository(USER_INFO)
     private userRepo: Repository<USER_INFO>,
+
+    private jwtService: JwtService,
   ) {}
+
+  //JWT Access token Generation
+  async generateUserTokens(userID) {
+    const accessToken = this.jwtService.sign({ userID });
+    //RefreashToken alternative: https://www.npmjs.com/package/uuid
+    const refreshToken = this.jwtService.sign({ userID }, { expiresIn: '7d' }); // long-lived refresh token
+
+    return{
+      accessToken,
+      refreshToken
+    };
+     
+  }
 
   //Signup
 
@@ -56,23 +76,44 @@ export class AuthService {
     const { email, password } = credentials;
 
     //checking if email already exists.
-    const user =await this.loginRepo.findOne({ where: { email } });
+    const user = await this.loginRepo.findOne({ where: { email } });
 
     if (!user) {
       throw new UnauthorizedException('Wrong Credentials!');
     }
 
-    const passworMatch = await bcrypt.compare(password,user.password);
-    
+    const passworMatch = await bcrypt.compare(password, user.password);
+
     if (!passworMatch) {
       throw new UnauthorizedException('Wrong Credentials!');
     }
 
-    return{
-      message:"Login Successful!."
-    }
+    //Generate JWT Token => npm install --save @nestjs/jwt
+    // const token = this.jwtService.sign(payload);
 
+    // user.refreshToken = refreshToken;
+    // await this.loginRepo.save(user);
+
+    // return this.generateUserTokens(user.id )
+
+    // return {
+    //   message: 'Login Successful!.',
+    // };
+
+    // Generate JWT token and refresh token
+    const { accessToken, refreshToken } = await this.generateUserTokens(user.id);
+
+    //Date calculation
+    const expDate =new Date();
+    expDate.setDate(expDate.getDate() + 7); // Adding 7 days to the current date
+
+    // Store refresh token in database
+    user.refreshToken = refreshToken;
+    user.refTokenExpDate = expDate;
+    await this.loginRepo.save(user);
+
+    return {accessToken, refreshToken, expDate};
     
-
   }
+
 }

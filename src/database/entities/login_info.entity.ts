@@ -20,4 +20,7 @@ export class LOGIN_INFO{
 
   @Column({ nullable: true })
   refreshToken: string;
+
+  @Column({ nullable: true }) 
+  refTokenExpDate: Date;
 }
