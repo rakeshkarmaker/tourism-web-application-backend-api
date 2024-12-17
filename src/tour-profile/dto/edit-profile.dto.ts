@@ -1,5 +1,5 @@
 //v1.5.0 - Tour Profile Feature added
-import { IsString, IsOptional, IsDate, IsEmail } from 'class-validator';
+import { IsString, IsOptional, IsEmail, IsISO8601 } from 'class-validator';
 
 export class EditProfileDto {// Methods are optional as changes are not nessarily required
   @IsOptional()
@@ -19,7 +19,7 @@ export class EditProfileDto {// Methods are optional as changes are not nessaril
   address?: string;
 
   @IsOptional()
-  @IsDate()
+  @IsISO8601() // v1.5.0 - Replacing @IsDate() with @IsISO8601() | ISO 8601 format like "2024-06-18"
   dob?: Date;
 
   @IsOptional()

@@ -21,11 +21,14 @@ import { MailService } from './mail.service';
         tls: {
             rejectUnauthorized: false,
         },
-      }
+      },
+      defaults: {
+        from: '"No Reply" <tourifybd@gmail.com>',
+      },
     }),
     
   ],
-  exports: [MailService], //needed in other modules
+  exports: [MailService,MailerModule], //needed in other modules
   controllers: [MailController],
   providers: [MailService],
 })
