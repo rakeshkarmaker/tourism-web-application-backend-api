@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth/constants';
 //v1.3.1- adding email
 import { MailModule } from './mail/mail.module';
+import { TourProfileModule } from './tour-profile/tour-profile.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { MailModule } from './mail/mail.module';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
     }),
-    MailModule
+    MailModule,
+    TourProfileModule
   ],
   controllers: [AppController],
   providers: [AppService],
