@@ -35,7 +35,7 @@ export class AuthService {
 
   //JWT Access token Generation
   
-  async generateUserTokens(userID) {
+  async generateUserTokens(userID: number) {
     const accessToken = this.jwtService.sign({ userID });
     //RefreashToken alternative: https://www.npmjs.com/package/uuid
     const refreshToken = this.jwtService.sign({ userID }, { expiresIn: '7d' }); // long-lived refresh token
@@ -47,6 +47,22 @@ export class AuthService {
     };
      
   }
+
+  //v1.4.3- refresh Tokens for this. function declared to save token
+  async saveRefreshToken(user: LOGIN_INFO){
+    const { accessToken, refreshToken } = await this.generateUserTokens(user.id);
+
+    //Date calculation
+    const expDate =new Date();
+    expDate.setDate(expDate.getDate() + 7); // Adding 7 days to the current date
+
+    // Store refresh token in database
+    user.refreshToken = refreshToken;
+    user.refTokenExpDate = expDate;
+    await this.loginRepo.save(user);
+    return {accessToken, refreshToken, expDate};
+  }
+
 
   //Signup
 
@@ -99,31 +115,10 @@ export class AuthService {
       throw new UnauthorizedException('Wrong Credentials!');
     }
 
-    //Generate JWT Token => npm install --save @nestjs/jwt
-    // const token = this.jwtService.sign(payload);
+    ////v1.4.3- refresh Tokens | here the approach is replaced by a save function to reuse it elsewhere
 
-    // user.refreshToken = refreshToken;
-    // await this.loginRepo.save(user);
-
-    // return this.generateUserTokens(user.id )
-
-    // return {
-    //   message: 'Login Successful!.',
-    // };
-
-    // Generate JWT token and refresh token
-    const { accessToken, refreshToken } = await this.generateUserTokens(user.id);
-
-    //Date calculation
-    const expDate =new Date();
-    expDate.setDate(expDate.getDate() + 7); // Adding 7 days to the current date
-
-    // Store refresh token in database
-    user.refreshToken = refreshToken;
-    user.refTokenExpDate = expDate;
-    await this.loginRepo.save(user);
-
-    return {accessToken, refreshToken, expDate};
+    // return {accessToken, refreshToken, expDate};
+    return await this.saveRefreshToken(user);
     
   }
 
@@ -131,11 +126,6 @@ export class AuthService {
   async generateSecureOTP(otpLength:number=8): Promise<{ otp: string; expDate: Date }|null> {//Installation: npm install uuid #Umm its overkill
 
     if (otpLength <= 4) return null; // Handling the invalid length minimum 4 digit otp
-
-    // // Generate an 8-digit OTP
-    // const buffer = new Uint8Array(otpLength);
-    // crypto.getRandomValues(buffer); // Use a cryptographic random number generator
-    // const otp = Array.from(crypto.getRandomValues(new Uint8Array(8)), (num) => (num % 10).toString()).join('');
 
     // Generating an 8-digit OTP
     const otp = Array.from(crypto.getRandomValues(new Uint8Array(otpLength)), (num) => (num % 10).toString()).join('');
@@ -148,7 +138,6 @@ export class AuthService {
   }
 
   //v1.3.1-OTP request for, Forget Password
-
   async sendOtp(forgotPasswordDto: ForgotPassDto) {
     const { email } = forgotPasswordDto;
   
@@ -178,6 +167,21 @@ export class AuthService {
       message: 'Password reset token sent to email',
       otp, // Removable in production
     };
+  }
+
+
+
+  //v1.4.3- refresh Tokens
+  async refreshTokens(refreshToken:string){
+    //Verifying refresh token exists and is not expired!
+    const token = await this.loginRepo.findOne({ where: { refreshToken: refreshToken } })
+
+    if(!token || new Date(token.refTokenExpDate) <= new Date()){ //if token is invalid or time is up, throw error!
+      throw new UnauthorizedException('Not found. Invalid Request.');
+
+    }
+    return this.saveRefreshToken(token);// If the user token is valid, generating a new token
+    
   }
 
     

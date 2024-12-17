@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { SignupDto } from './dtos/signup.dto';
 import { LoginDto } from './dtos/login.dto';
 import { ForgotPassDto } from './dtos/forget_pass.dto';
+import { RefreshTokenDto } from './dtos/refresh-tokens.dto';//v1.4.3- Refresh
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +28,12 @@ export class AuthController {
   @Post('reqOtp')
   async reqOtp(@Body() email:ForgotPassDto){
     return this.AuthService.sendOtp(email);
+  }
+
+  //v1.4.3- Refresh
+  @Post('refresh')
+  async refreshTokens(@Body() refreshTokenDto:RefreshTokenDto){
+    return this.AuthService.refreshTokens(refreshTokenDto.refreshToken);
   }
 }
 
