@@ -48,6 +48,7 @@ import { TRANSACTION } from './entities/income.entity';
       },
     ),
   ],
+  exports: [TypeOrmModule], //v1.4.2- Exporting the TypeOrmModule to other modules so other modules can now use this
   controllers: [],
   providers: [],
 })

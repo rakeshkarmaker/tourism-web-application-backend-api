@@ -5,23 +5,35 @@ import { DatabaseModule } from './database/database.module'; //Connecting the Da
 // import { TypeOrmModule } from '@nestjs/typeorm';//For  Database connection test entity - CRUD Operation part.
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './auth/constants';
+// import { jwtConstants } from './auth/constants';
 //v1.3.1- adding email
 import { MailModule } from './mail/mail.module';
-//v1.5.0 - Tour Profile Feature added
+//v.1.4.2- config adding.
+import config from './config/config';//npm i @nestjs/config
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TourProfileModule } from './tour-profile/tour-profile.module';
 
 @Module({
   imports: [
     DatabaseModule,
     AuthModule,
-    JwtModule.register({
-      global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+    ConfigModule.forRoot({
+      isGlobal:true,
+      cache:true,
+      load:[config],
+
+    }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (config) => ({
+        secret: config.get('jwt.secret'),
+      }),
+      global:true,
+      inject:[ConfigService]
     }),
     MailModule,
-    TourProfileModule
+    TourProfileModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService],

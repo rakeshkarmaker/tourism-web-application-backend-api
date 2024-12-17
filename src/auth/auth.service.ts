@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt'; // npm i @types/bcrypt
 import { LoginDto } from './dtos/login.dto';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt'; // v1.4.2- needed already given
 import { ForgotPassDto } from './dtos/forget_pass.dto';
 
 
@@ -29,10 +29,12 @@ export class AuthService {
 
     private jwtService: JwtService,
     private mailService:MailService, // v1.3.1- Email authentication
+    private jwtservice: JwtService,//v1.4.2- JWT refresh and guard.
 
   ) {}
 
   //JWT Access token Generation
+  
   async generateUserTokens(userID) {
     const accessToken = this.jwtService.sign({ userID });
     //RefreashToken alternative: https://www.npmjs.com/package/uuid
