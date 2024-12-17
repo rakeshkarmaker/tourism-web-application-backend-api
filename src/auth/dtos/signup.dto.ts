@@ -27,7 +27,7 @@ export class SignupDto {
     message: 'Password must contain atleast 1 number!',
   })
   password: string;
-  [key: string]: any; // Allows additional fields for user info
+  // [key: string]: any; // Allows additional fields for user info
 
   //...Rest
   @IsNotEmpty()

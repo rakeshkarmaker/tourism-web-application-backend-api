@@ -1,10 +1,11 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { SignupDto } from './dtos/signup.dto';
 import { USER_INFO } from 'src/database/entities/user_info.entity';
 import { LOGIN_INFO } from 'src/database/entities/login_info.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt'; // npm i @types/bcrypt
+import { LoginDto } from './dtos/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,8 +16,6 @@ export class AuthService {
     @InjectRepository(USER_INFO)
     private userRepo: Repository<USER_INFO>,
   ) {}
-
-
 
   //Signup
 
@@ -52,6 +51,28 @@ export class AuthService {
     return { message: 'Signup successful', userId: savedUser.id };
   }
 
-
   //Login
+  async login(credentials: LoginDto) {
+    const { email, password } = credentials;
+
+    //checking if email already exists.
+    const user =await this.loginRepo.findOne({ where: { email } });
+
+    if (!user) {
+      throw new UnauthorizedException('Wrong Credentials!');
+    }
+
+    const passworMatch = await bcrypt.compare(password,user.password);
+    
+    if (!passworMatch) {
+      throw new UnauthorizedException('Wrong Credentials!');
+    }
+
+    return{
+      message:"Login Successful!."
+    }
+
+    
+
+  }
 }
