@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth/constants';
 //v1.3.1- adding email
 import { MailModule } from './mail/mail.module';
+//v1.5.0 - Tour Profile Feature added
 import { TourProfileModule } from './tour-profile/tour-profile.module';
 
 @Module({
