@@ -16,6 +16,7 @@ import { ForgotPassDto } from './dtos/forget_pass.dto';
 
 import { MailService } from '../mail/mail.service';
 import { sendotpDto } from './dtos/sendotp.dto';
+import { ChangePassDto } from './dtos/change_pass.dto';
 
 @Injectable()
 export class AuthService {
@@ -252,16 +253,54 @@ export class AuthService {
       throw new NotFoundException('User not found. Invalid Request.');
     }
 
-    user.refreshToken = null;// Deleting tokens
+    user.refreshToken = null; // Deleting tokens
     user.refTokenExpDate = null;
     user.resetToken = null;
     user.resetTokenExpDate = null;
 
     await this.loginRepo.save(user);
 
-    return { message: `Logout successful.Token set to ${user.refreshToken} and date set to ${user.refTokenExpDate}` };
+    return {
+      message: `Logout successful.Token set to ${user.refreshToken} and date set to ${user.refTokenExpDate}`,
+    };
   }
 
-}
+  // v1.7.0 - Change Passward
+  async changePassword(
+    userId: number,
+    changePass: ChangePassDto,
+  ): Promise<{ message: string }> {
+    const { currentPassword, newPassword } = changePass;
 
-// v1.x.x - Change Passward
+    const user = await this.loginRepo.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found. Invalid Request.');
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Incorrect current password.');
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 11); // Hashing
+    user.password = hashedNewPassword; // Update pass
+
+    user.refreshToken = null; // Good Practice)(), log out all active sessions by clearing the refresh tokens
+    user.refTokenExpDate = null;
+
+    await this.loginRepo.save(user);
+    //Sending Email to the user
+    this.mailService.sendMail(
+      user.email,
+      'Your Tourify Accoount Password has been Changes!',
+      `'Your Password Has been Changed and Try recovery if you haven't changed your password.`,
+    );
+
+    // Return Success.
+    return { message: 'Password changed successfully' };
+  }
+}

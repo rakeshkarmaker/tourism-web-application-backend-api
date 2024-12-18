@@ -1,10 +1,12 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dtos/signup.dto';
 import { LoginDto } from './dtos/login.dto';
 import { ForgotPassDto } from './dtos/forget_pass.dto';
 import { RefreshTokenDto } from './dtos/refresh-tokens.dto';//v1.4.3- Refresh
 import { sendotpDto } from './dtos/sendotp.dto';
+import { ChangePassDto } from './dtos/change_pass.dto';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -42,5 +44,13 @@ export class AuthController {
   async reserPassword(@Body() forgotPass:ForgotPassDto){
     return this.AuthService.forgotPass(forgotPass);
   }
+  //v1.7.0 - Change Passward
+  @UseGuards(AuthGuard) // Protect all routes
+  @Put('change-pass')
+  async changePassword(@Req() req,@Body() changePass: ChangePassDto) {
+    const userId = req.userId; // Assuming the userId is in the JWT payload
+    return await this.AuthService.changePassword(userId, changePass);
+  }
+  
 }
 
