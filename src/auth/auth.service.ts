@@ -29,7 +29,6 @@ export class AuthService {
 
     private jwtService: JwtService,
     private mailService:MailService, // v1.3.1- Email authentication
-    private jwtservice: JwtService,//v1.4.2- JWT refresh and guard.
 
   ) {}
 
@@ -231,6 +230,9 @@ export class AuthService {
     }
 
   }
+
+  // v1.x.x - Change Passward
+
 
 
     
