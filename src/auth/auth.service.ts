@@ -249,11 +249,13 @@ export class AuthService {
     const user = await this.loginRepo.findOne({ where: { id: userId } });
 
     if (!user) {
-      throw new NotFoundException('User not found.');
+      throw new NotFoundException('User not found. Invalid Request.');
     }
 
     user.refreshToken = null;// Deleting tokens
     user.refTokenExpDate = null;
+    user.resetToken = null;
+    user.resetTokenExpDate = null;
 
     await this.loginRepo.save(user);
 
