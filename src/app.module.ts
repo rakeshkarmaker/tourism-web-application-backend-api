@@ -12,7 +12,6 @@ import config from './config/config';//npm i @nestjs/config
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TourProfileModule } from './tour-profile/tour-profile.module';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { TourGuidePostController } from './tour-guide-post/tour-guide-post.controller';
 import { TourGuidePostModule } from './tour-guide-post/tour-guide-post.module';
 
 @Module({
@@ -38,7 +37,7 @@ import { TourGuidePostModule } from './tour-guide-post/tour-guide-post.module';
     TourGuidePostModule,
     
   ],
-  controllers: [AppController, TourGuidePostController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

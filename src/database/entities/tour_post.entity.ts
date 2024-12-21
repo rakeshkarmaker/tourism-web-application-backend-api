@@ -1,33 +1,59 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { USER_INFO } from './user_info.entity';
-import { DESTINATION_INFO } from './destination_info.entity';
+import { Review } from './tour_post_review.entity';
 
-// Tour Post Entity
 @Entity()
-export class TOUR_POST {
+export class GUIDE_POST {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 100 })
+  @Column({ length: 200 })
   title: string;
 
-  @Column()
+  @Column({ type: 'text' })
   description: string;
 
-  @Column()
-  image_path: string;
+  @Column({ type: 'text', nullable: true })
+  activities: string; // List of activities
 
-  @ManyToOne(() => USER_INFO)
-  @JoinColumn({ name: 'user_id' })
-  user_id: number;
+  @Column({ type: 'text', nullable: true })
+  included: string; // What is included
 
-  @ManyToOne(() => DESTINATION_INFO)
-  @JoinColumn({ name: 'destination_id' })
-  destination_id: number;
+  @Column({ type: 'text', nullable: true })
+  notIncluded: string; // What is not included
 
-  @Column()
-  post_date: Date;
+  @Column({ type: 'text', nullable: true })
+  details: string; // Detailed information
 
-  @Column()
-  price: number;
+  @Column({ length: 255, nullable: true })
+  meetingAddress: string; // Address for meeting point
+
+  @Column({ type: 'text', nullable: true })
+  googleMapLink: string; // Google Maps link
+
+  @Column({ type: 'decimal', precision: 2, scale: 1, default: 0 })
+  averageReview: number; // Calculated average review score
+
+  @OneToMany(() => Review, (review) => review.guidePost)
+  reviews: Review[]; // List of reviews
+
+  @Column('simple-array', { nullable: true })
+  images: string[]; // List of image paths or URLs
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @ManyToOne(() => USER_INFO, (user) => user.tourPosts)
+  createdBy: USER_INFO; // The user who created the tour post
 }

@@ -1,5 +1,7 @@
 
-import { Entity, Column, PrimaryGeneratedColumn} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn,OneToMany} from 'typeorm';
+import { GUIDE_POST } from './tour_post.entity';
+import { Review } from './tour_post_review.entity';
 
 @Entity()
 export class USER_INFO{
@@ -38,4 +40,13 @@ export class USER_INFO{
 
   @Column({ type: 'enum', enum: ['User', 'Admin', 'TourAgency','TourGuide'] }) // V1.1.2 - By using enum, limiting the values
   user_type: string;
+  
+  //V2.0.0- One-to-Many relationship with TourPost
+  @OneToMany(() => GUIDE_POST, (tourPost) => tourPost.createdBy, { cascade: true })
+  tourPosts: GUIDE_POST[];
+
+  //V2.0.0- One-to-Many relationship with Review
+  @OneToMany(() => Review, (review) => review.user)
+  reviews: Review[]; // Heree, a user can have many reviews
+  
 }

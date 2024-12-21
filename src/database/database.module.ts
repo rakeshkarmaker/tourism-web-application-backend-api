@@ -13,9 +13,10 @@ import { DESTINATION_INFO } from './entities/destination_info.entity';
 import { REVIEW_INFO } from './entities/review_info.entity';
 import { MESSAGE } from './entities/message.entity';//// DB required for the Tour Guide Admin dashboard
 import { NOTIFICATION } from './entities/notification.entity';
-import { TOUR_POST } from './entities/tour_post.entity';
+import { GUIDE_POST } from './entities/tour_post.entity';
 import { TRANSACTION } from './entities/income.entity';
 import * as dotenv from 'dotenv'; //Making sure the .env file is loaded properly at runtime.
+import { Review } from './entities/tour_post_review.entity';
 dotenv.config();
 
 @Module({
@@ -32,8 +33,10 @@ dotenv.config();
       PAYMENT_INFO,
       MESSAGE,
       NOTIFICATION,
-      TOUR_POST,
-      TRANSACTION
+      TRANSACTION,
+      GUIDE_POST,
+      Review,
+
     ]), //npm add @nestjs/typeorm typeorm pg
     TypeOrmModule.forRoot(
       // Connecting POSTGRE SQL to NESTJS
@@ -47,6 +50,7 @@ dotenv.config();
         entities: [__dirname + '/../database/entities/*.entity.{js,ts}'],
         autoLoadEntities: true, // Enable automatic entity loading
         synchronize: true,
+        logging: true,
       },
     ),
   ],
