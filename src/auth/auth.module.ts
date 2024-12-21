@@ -6,6 +6,7 @@ import { LOGIN_INFO } from '../database/entities/login_info.entity';
 import { USER_INFO } from '../database/entities/user_info.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { DatabaseModule } from 'src/database/database.module';
+import { AuthHelper } from './auth.helper';
 
 @Module({
   imports: [//v1.4.2- Removed multiple redeclaration of postgredsql and rather used import from database
@@ -14,6 +15,6 @@ import { DatabaseModule } from 'src/database/database.module';
     MailModule
   ],
   controllers: [AuthController],
-  providers: [AuthService]
+  providers: [AuthService,AuthHelper]
 })
 export class AuthModule {}
