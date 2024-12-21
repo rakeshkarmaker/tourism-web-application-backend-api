@@ -15,6 +15,8 @@ import { MESSAGE } from './entities/message.entity';//// DB required for the Tou
 import { NOTIFICATION } from './entities/notification.entity';
 import { TOUR_POST } from './entities/tour_post.entity';
 import { TRANSACTION } from './entities/income.entity';
+import * as dotenv from 'dotenv'; //Making sure the .env file is loaded properly at runtime.
+dotenv.config();
 
 @Module({
   imports: [
@@ -37,11 +39,11 @@ import { TRANSACTION } from './entities/income.entity';
       // Connecting POSTGRE SQL to NESTJS
       {
         type: 'postgres',
-        host: 'localhost',
-        port: 5432,
-        username: 'postgres',
-        password: 'root',
-        database: 'TOURISM_DATABASE',
+        host: process.env.POSTGRES_HOST,
+        port: parseInt(process.env.DB_PORT, 10),
+        username: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        database: process.env.POSTGRES_DB,
         entities: [__dirname + '/../database/entities/*.entity.{js,ts}'],
         autoLoadEntities: true, // Enable automatic entity loading
         synchronize: true,
