@@ -35,7 +35,7 @@ export class AuthController {
     return this.AuthService.sendOtp(email);
   }
 
-  //v1.4.3- Refresh
+  //v1.4.3- Refresh Token
   @Post('refresh')
   async refreshTokens(@Body() refreshTokenDto:RefreshTokenDto){
     return this.AuthService.refreshTokens(refreshTokenDto.refreshToken);
@@ -52,6 +52,13 @@ export class AuthController {
   async changePassword(@Req() req,@Body() changePass: ChangePassDto) {
     const userId = req.userId; // Assuming the userId is in the JWT payload
     return await this.AuthService.changePassword(userId, changePass);
+  }
+  //v1.7.5- Logout
+  @UseGuards(AuthGuard) // Protect all routes
+  @Post('logout')
+  async logout(@Req() req) {
+    const userId = req.userId; // Assuming the userId is in the JWT payload
+    return await this.AuthService.logout(userId); // Log the user out
   }
   
 }
