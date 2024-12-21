@@ -32,14 +32,14 @@ export class AuthController {
     return this.AuthService.sendOtp(email);
   }
 
-  
+  @UseGuards(AuthGuard) // Protected
   @Post('refresh')//v1.4.3- Refresh Token
   async refreshTokens(@Body() refreshTokenDto:RefreshTokenDto){
     return this.AuthService.refreshTokens(refreshTokenDto.refreshToken);
   }
 
   
-  @Post('resetpass')//v1.5.1- ForgetPassword
+  @Post('forget-pass')//v1.5.1- ForgetPassword
   async reserPassword(@Body() forgotPass:ForgotPassDto){
     return this.AuthService.forgotPass(forgotPass);
   }

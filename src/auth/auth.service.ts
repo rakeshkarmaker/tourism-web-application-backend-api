@@ -34,8 +34,8 @@ export class AuthService {
 
   //Signup
   async signup(signupData: SignupDto) {
-    //Using destructor
-    const { name, email, password, ...otherUserInfos } = signupData;
+    
+    const { name, email, password, ...otherUserInfos } = signupData;//Using destructor
 
     //checking if email already exists.
     const emailInUser = await this.userRepo.findOne({ where: { email } });
@@ -46,18 +46,11 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 11); //  the password field must be a string, but you're attempting to pass a Promise<string> due to not awaiting the bcrypt.hash function.
 
     //Create the User and save in database.
-    const user = await this.userRepo.create({
-      name,
-      email,
-      ...otherUserInfos,
-    });
+    const user = await this.userRepo.create({name,email,...otherUserInfos,});
+
     // Save the user to the database
     const savedUser = await this.userRepo.save(user);
-    const login = this.loginRepo.create({
-      user: savedUser, // Link the saved USER_INFO entity
-      email,
-      password: hashedPassword,
-    });
+    const login = this.loginRepo.create({user: savedUser,email,password: hashedPassword,});
 
     // Save the login information to the database
     await this.loginRepo.save(login);
@@ -83,24 +76,18 @@ export class AuthService {
     }
 
     ////v1.4.3- refresh Tokens | here the approach is replaced by a save function to reuse it elsewhere
-
-    // return {accessToken, refreshToken, expDate};
     return await this.authHelper.saveRefreshToken(user);
   }
-
-
   
 
   //v1.4.3- refresh Tokens
   async refreshTokens(refreshToken: string) {
     //Verifying refresh token exists and is not expired!
-    const token = await this.loginRepo.findOne({
-      where: { refreshToken: refreshToken },
-    });
+    const token = await this.loginRepo.findOne({where: { refreshToken: refreshToken },});
 
-    if (!token || new Date(token.refTokenExpDate) <= new Date()) {
-      //if token is invalid or time is up, throw error!
+    if (!token || new Date(token.refTokenExpDate) <= new Date()) { //if token is invalid or time is up, throw error!
       throw new UnauthorizedException('Not found. Invalid Request.');
+      
     }
     return this.authHelper.saveRefreshToken(token); // If the user token is valid, generating a new token
   }
@@ -116,16 +103,15 @@ export class AuthService {
         throw new NotFoundException('User not found. Invalid Request.');
       }
   
-      // Generate a reset token
-      const { otp, expDate } = await this.authHelper.generateSecureOTP();
-  
-      // Store the reset token and expiration date in the database
+      const { otp, expDate } = await this.authHelper.generateSecureOTP(); // Generating a reset token
+
+      // Storing the reset token and expiration date in the database
       user.resetToken = otp;
       user.resetTokenExpDate = expDate;
       await this.loginRepo.save(user);
   
-      // Send email with the otp => https://www.nodemailer.com/
-      await this.mailService.sendMail(
+      
+      await this.mailService.sendMail(// Send email with the otp => https://www.nodemailer.com/
         user.email,
         'Password Reset OTP Request',
         `Use this OTP to reset your password. OTP: ${otp}`,
@@ -145,10 +131,7 @@ export class AuthService {
       throw new NotFoundException('User not found. Invalid Request.');
     }
 
-    if (
-      user.resetToken === otp &&
-      new Date(user.resetTokenExpDate) >= new Date()
-    ) {
+    if (user.resetToken === otp && new Date(user.resetTokenExpDate) >= new Date() ) {
       // If reset token mactchs and reset time still valid then return true => send reset Pass
 
       //Generating Password
@@ -164,8 +147,7 @@ export class AuthService {
 
       //Return values
       return {
-        message:
-          'Your Password Has been reset and Recovery pass send to email.',
+        message: 'Your Password Has been reset and Recovery pass send to email.',
         New_Password: password,
       };
     } else {
@@ -189,9 +171,7 @@ export class AuthService {
 
     await this.loginRepo.save(user);
 
-    return {
-      message: `Logout successful.Token set to ${user.refreshToken} and date set to ${user.refTokenExpDate}`,
-    };
+    return {message: `Logout successful.Token set to ${user.refreshToken} and date set to ${user.refTokenExpDate}`};
   }
 
   // v1.7.0 - Change Passward
@@ -207,10 +187,8 @@ export class AuthService {
       throw new NotFoundException('User not found. Invalid Request.');
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      currentPassword,
-      user.password,
-    );
+    const isPasswordValid = await bcrypt.compare(currentPassword,user.password,);
+    
     if (!isPasswordValid) {
       throw new UnauthorizedException('Incorrect current password.');
     }
