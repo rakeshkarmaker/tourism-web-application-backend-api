@@ -13,6 +13,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TourProfileModule } from './tour-profile/tour-profile.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { TourGuidePostModule } from './tour-guide-post/tour-guide-post.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { TourGuidePostModule } from './tour-guide-post/tour-guide-post.module';
     MailerModule,
     TourProfileModule,
     TourGuidePostModule,
+    ChatModule,
     
   ],
   controllers: [AppController],
