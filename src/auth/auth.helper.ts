@@ -35,7 +35,8 @@ export class AuthHelper {
       user.refreshToken = refreshToken;
       user.refTokenExpDate = expDate;
       await this.loginRepo.save(user);
-      return { accessToken, refreshToken, expDate };
+      return { accessToken, refreshToken, expDate,
+      };
     }
   
 
@@ -57,6 +58,7 @@ export class AuthHelper {
   }
 
 
+  
 
     async generateAndHashPassword(length: number = 12): Promise<{ password: string; hash: string }> {
         // Characters to be used in the password

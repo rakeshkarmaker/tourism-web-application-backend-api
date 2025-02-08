@@ -60,10 +60,11 @@ export class AuthService {
 
   //Login
   async login(credentials: LoginDto) {
+    console.log(credentials);
     const { email, password } = credentials;
 
     //checking if email already exists.
-    const user = await this.loginRepo.findOne({ where: { email } });
+    const user = await this.loginRepo.findOne({ where: { email }, relations: ['user'] });
 
     if (!user) {
       throw new UnauthorizedException('Wrong Credentials!');
@@ -74,9 +75,19 @@ export class AuthService {
     if (!passworMatch) {
       throw new UnauthorizedException('Wrong Credentials!');
     }
+    const { accessToken, refreshToken,expDate } = await this.authHelper.saveRefreshToken(user); //v1.4.3- refresh Tokens | here the approach is replaced by a save function to reuse it elsewhere
 
     ////v1.4.3- refresh Tokens | here the approach is replaced by a save function to reuse it elsewhere
-    return await this.authHelper.saveRefreshToken(user);
+    return { access_token: accessToken, refresh_token: refreshToken, expDate: expDate, 
+      user: {
+        id: user.user.id,
+        name: user.user.name,
+        email: user.email,
+        phone_no: user.user.phone_no,
+        address: user.user.address,
+        dob: user.user.dob,
+      } };
+
   }
   
 
