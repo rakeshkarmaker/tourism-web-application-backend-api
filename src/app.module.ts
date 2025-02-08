@@ -14,6 +14,7 @@ import { TourProfileModule } from './tour-profile/tour-profile.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { TourGuidePostModule } from './tour-guide-post/tour-guide-post.module';
 import { ChatModule } from './chat/chat.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -37,9 +38,10 @@ import { ChatModule } from './chat/chat.module';
     TourProfileModule,
     TourGuidePostModule,
     ChatModule,
+    FileModule,
     
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, ],
+  providers: [AppService, ],
 })
 export class AppModule {}

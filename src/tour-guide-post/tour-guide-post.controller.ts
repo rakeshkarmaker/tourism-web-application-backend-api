@@ -16,26 +16,34 @@ export class TourGuidePostController {
 
     @Get('view')
     async viewGuidePost(@Req() req) {
-        const userID = req.userID;
-        return this.tourGuideService.findPostsByGuide(userID);
+        const guideID = req.userID;
+        return this.tourGuideService.findPostsByGuide(guideID);
     }
 
     // Postman link: http://localhost:3000/tour-guide-post/create
     @Post('create')
     async createGuidePost(@Req() req,@Body() createTourGuide: CreateTourGuideDto) {
-        const userId = req.userId;
-        return this.tourGuideService.createGuidePost(createTourGuide,userId);
+        const guideID = req.userID;
+        console.log("User ID:", guideID); // Debugging
+        return this.tourGuideService.createGuidePost(createTourGuide,guideID);
     }
     
 
+    // Postman link: http://localhost:3000/tour-guide-post/update/1
+    //V3.0.1-Update a guide post
     @Put('update/:id')
-    async editGuidePost(@Param('id') guidePostId: number,@Body () updatePost: UpdateGuidePostDto,) {
-        return this.tourGuideService.updateTourGuide(guidePostId, updatePost);
+    async editGuidePost(@Req() req,@Param('id') guidePostId: number,@Body () updatePost: UpdateGuidePostDto,) {
+        const guideID = req.userID;
+        return this.tourGuideService.updateTourGuide(guideID,guidePostId, updatePost);
     }
 
+    // Postman link: http://localhost:3000/tour-guide-post/delete/1
+    //V3.0.1-Delete a guide post Updated
     @Delete('delete/:id')
-    async deleteGuidePost(@Param('id') guidePostId: number) {
-        return this.tourGuideService.deleteGuidePost(guidePostId);
+    async deleteGuidePost(@Req() req,@Param('id') guidePostId: number) {
+        const guideID = req.userID;
+        console.log("User ID:", guideID); // Debugging
+        return this.tourGuideService.deleteGuidePost(guideID,guidePostId);
     }
     
 }
