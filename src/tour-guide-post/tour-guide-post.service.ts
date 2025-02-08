@@ -1,3 +1,5 @@
+////file name: tour-guide-post.service.ts
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTourGuideDto } from './dto/create-guide-post.dto';
 import { GUIDE_POST } from '../database/entities/tour_post.entity';
