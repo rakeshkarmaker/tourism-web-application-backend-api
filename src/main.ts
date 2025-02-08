@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as cors from 'cors'; // Importing CORS using ES module syntax
+import * as bodyParser from 'body-parser'; // Importing body-parser
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
@@ -18,7 +19,10 @@ async function bootstrap() {
     prefix: '/uploads',
   });
 
-  
+    // Use body parser middleware
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: true }));
+
    // To enable cookies with CORS
    app.use(cors({
     origin: 'http://localhost:3002', // Replace with your frontend's URL

@@ -1,6 +1,3 @@
-
-//V3.1.0- Guide post fixed & File upload Added
-
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { FileController } from './file.controller';
@@ -15,7 +12,8 @@ import * as fs from 'fs';
     MulterModule.register({
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const folder = req.body.folder || 'others'; // Default folder if not specified
+          // 👇 Get folder from query parameter instead of body
+          const folder = req.query.folder || 'others'; 
           const uploadPath = `./uploads/${folder}`;
 
           // Ensure folder exists
@@ -30,6 +28,7 @@ import * as fs from 'fs';
           cb(null, uniqueName);
         },
       }),
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
     }),
   ],
   controllers: [FileController],
