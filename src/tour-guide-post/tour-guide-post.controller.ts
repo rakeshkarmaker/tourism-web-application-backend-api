@@ -20,6 +20,11 @@ export class TourGuidePostController {
         return this.tourGuideService.findPostsByGuide(guideID);
     }
 
+    @Get('view/:id')
+    async viewGuidePostById(@Param('id') guidePostId: number) {
+        return this.tourGuideService.findPostById(guidePostId);
+    }
+
     // Postman link: http://localhost:3000/tour-guide-post/create
     @Post('create')
     async createGuidePost(@Req() req,@Body() createTourGuide: CreateTourGuideDto) {

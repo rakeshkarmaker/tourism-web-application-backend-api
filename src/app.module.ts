@@ -15,6 +15,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { TourGuidePostModule } from './tour-guide-post/tour-guide-post.module';
 import { ChatModule } from './chat/chat.module';
 import { FileModule } from './file/file.module';
+import { GeminiModule } from './gemini/gemini.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { FileModule } from './file/file.module';
     TourGuidePostModule,
     ChatModule,
     FileModule,
+    GeminiModule,
     
   ],
   controllers: [AppController, ],

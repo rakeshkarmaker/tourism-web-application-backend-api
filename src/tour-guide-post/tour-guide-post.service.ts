@@ -11,6 +11,7 @@ import { USER_INFO } from 'src/database/entities/user_info.entity';
 //v2.0.0- Service for Tour Guide Post
 @Injectable()
 export class TourGuidePostService {
+  
   constructor(
     @InjectRepository(GUIDE_POST)
     private readonly tourPostRepository: Repository<GUIDE_POST>,
@@ -18,6 +19,15 @@ export class TourGuidePostService {
     private readonly userRepository: Repository<USER_INFO>,
   ) {}
 
+  //V3.2.0- Find a post by ID
+  async findPostById(guidePostId: number): Promise<GUIDE_POST> {
+    const guidePost = await this.tourPostRepository.findOne({where : {id: guidePostId}});
+
+    if (!guidePost) {
+      throw new NotFoundException(`Tour Guide Post not found`);
+    }
+    return guidePost;
+  }
   //v2.0.0- Create Tour Guide Post
   async createGuidePost(createTourPost: CreateTourGuideDto,userId: number): Promise<GUIDE_POST> {
     const tourGuide = await this.userRepository.findOne({ where: { id: userId, user_type: 'TourGuide' } });

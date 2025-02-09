@@ -16,6 +16,7 @@ import { MailService } from '../mail/mail.service';
 import { ChangePassDto } from './dtos/change_pass.dto';
 import { AuthHelper } from './auth.helper';
 import { sendotpDto } from './dtos/sendotp.dto';
+import { RefreshTokenDto } from './dtos/refresh-tokens.dto';
 
 @Injectable()
 export class AuthService {
@@ -60,7 +61,7 @@ export class AuthService {
 
   //Login
   async login(credentials: LoginDto) {
-    console.log(credentials);
+    // console.log(credentials);
     const { email, password } = credentials;
 
     //checking if email already exists.
@@ -220,5 +221,20 @@ export class AuthService {
 
     // Return Success.
     return { message: 'Password changed successfully' };
+  }
+
+
+  async validateToken(userID: number,refeashToken:RefreshTokenDto) {
+
+    const user = await this.loginRepo.findOne({ where: { id: userID } });
+
+    if (!user || new Date(user.refTokenExpDate) <= new Date()) {
+      throw new NotFoundException('User not found. Invalid Request.');
+    }
+    if(String(user.refreshToken) !== String(refeashToken)){ //bugs fixed
+      throw new NotFoundException('Invalid token. Invalid Request.');
+    }
+    // Optionally, return a response or perform further logic if valid.
+    return { message: 'Token is valid' };
   }
 }

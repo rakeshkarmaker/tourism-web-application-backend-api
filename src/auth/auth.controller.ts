@@ -59,6 +59,15 @@ export class AuthController {
     const userId = req.userId; // Assuming the userId is in the JWT payload
     return await this.AuthService.logout(userId); // Log the user out
   }
+
+  // Valid Token validate-token
+  //postman:
+  @UseGuards(AuthGuard)
+  @Post('validate-token')
+  async validateToken(@Req() req,@Body() token:RefreshTokenDto){
+    const userID = req.userId;
+    return await this.AuthService.validateToken(userID,token);
+  }
   
 }
 
